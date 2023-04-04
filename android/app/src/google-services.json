@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "99491371348",
+    "project_id": "revpay-81a97",
+    "storage_bucket": "revpay-81a97.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:99491371348:android:21e7f3c44f80e9c09710c1",
+        "android_client_info": {
+          "package_name": "com.example.revpay"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "99491371348-dalela277sudjf1qmn633frtdrkp9ac5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.revpay",
+            "certificate_hash": "a97a80c1847bfc630a8d67280cb569bceeb0d7a0"
+          }
+        },
+        {
+          "client_id": "99491371348-luloa2buqrvodj3tee48d9mp4rvt1p4i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBrJbHbgHQWOXcZ3r8vGoNC-IEm_lDliHA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "99491371348-d3pdplsd4hjmt542k736gu7dd1b0bq9b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
