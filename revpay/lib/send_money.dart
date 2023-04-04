@@ -18,26 +18,69 @@ class _SendMoneyState extends State<SendMoney> {
     return Scaffold(
       backgroundColor: Colors.amberAccent,
       body: ListView(
-        children: [       
-          const SizedBox(height: 5),
-  /* Container(
-    height: 710,
-    width: 200,
-    decoration: BoxDecoration(
-        image: DecorationImage(image : AssetImage('assets/send money page.png'), fit: BoxFit.fill)),
-    //  child: Scaffold(
-    //   backgroundColor: Colors.transparent,
-    //  ),
-   )*/
-
+        children: [ 
+          Container(
+               padding :EdgeInsets.only(top: 50),    
+           child : Text('Sender Account number :',style:TextStyle(color: Colors.black, fontSize: 20),),
+          ),
+         Container(
+          padding :EdgeInsets.only(top: 20),
+          child: Column(
+            children: [
+              TextField(
+                decoration: InputDecoration(
+                  fillColor: Colors.grey.shade100,
+                  filled: true,
+                  hintText: 'account number',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10))),
+              ),
+            ],
+          ),
+         ),
+              Container(
+               padding :EdgeInsets.only(top: 40),    
+           child : Text('Amount :',style:TextStyle(color: Colors.black, fontSize: 20),),
+          ),
+         Container(
+          padding :EdgeInsets.only(top: 20),
+          child: Column(
+            children: [
+              TextField(
+                decoration: InputDecoration(
+                  fillColor: Colors.grey.shade100,
+                  filled: true,
+                  hintText: 'amount',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10))),
+              ),
+            ],
+          ),
+         ),
+         Container(
+               padding :EdgeInsets.only(top: 40),    
+           child : Text('Recipient Account number :',style:TextStyle(color: Colors.black, fontSize: 20),),
+          ),
+         Container(
+          padding :EdgeInsets.only(top: 20),
+          child: Column(
+            children: [
+              TextField(
+                decoration: InputDecoration(
+                  fillColor: Colors.grey.shade100,
+                  filled: true,
+                  hintText: 'account number',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10))),
+              ),
+            ],
+          ),
+         ),
+         const SizedBox(height: 235,),
+         ElevatedButton(onPressed:() {}, child: Text('Transfer Amount'))
 
 ],
-      
-       
-       
-             )
-      
-      
-    );
+    )
+ );
   }
 }
