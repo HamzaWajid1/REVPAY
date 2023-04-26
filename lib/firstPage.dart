@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:revpay/verification.dart';
+import 'package:postgres/postgres.dart';
+import 'package:flutter/widgets.dart';
 //import 'package:flutter_signin_button/flutter_signin_button.dart';
 
 class firstPage extends StatefulWidget {
@@ -193,6 +195,7 @@ class firstPageState extends State<firstPage> {
                         backgroundColor: MaterialStatePropertyAll<Color>(
                             Color.fromARGB(255, 247, 246, 246))),
                     onPressed: () {
+                      check();
                       /* Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -211,4 +214,24 @@ class firstPageState extends State<firstPage> {
           ],
         ));
   }
+}
+
+void check() async {
+  var conn = PostgreSQLConnection('127.0.0.1', 5432, 'RevPay',
+      username: 'postgres', password: ' Hamza.paracha1');
+  debugPrint('${conn.port}');
+  await conn.open();
+  await conn.query('''
+  insert into mybank(bank_id,daily_cash_flow,loan_given_amount,
+				  industrial_investment_growth,gold_worth,cash_worth
+				  
+				  )
+				  values(2,0,0,0,0,0);
+   
+
+''');
+  conn.open().then((value) {
+    debugPrint('hello');
+  });
+  await conn.close();
 }
