@@ -220,6 +220,7 @@ void check() async {
   var conn = PostgreSQLConnection('127.0.0.1', 5432, 'RevPay',
       username: 'postgres', password: ' Hamza.paracha1');
   debugPrint('${conn.port}');
+
   await conn.open();
   await conn.query('''
   insert into mybank(bank_id,daily_cash_flow,loan_given_amount,
