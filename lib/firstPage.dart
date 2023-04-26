@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
+import 'package:revpay/Home_Page.dart';
 import 'package:revpay/verification.dart';
 import 'package:postgres/postgres.dart';
 import 'package:flutter/widgets.dart';
@@ -195,12 +196,12 @@ class firstPageState extends State<firstPage> {
                         backgroundColor: MaterialStatePropertyAll<Color>(
                             Color.fromARGB(255, 247, 246, 246))),
                     onPressed: () {
-                      check();
-                      /* Navigator.push(
+                      //check();
+                      Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => Verification('3216879672'),
-                          ));*/
+                            builder: (context) => HomePage(),
+                          ));
                     },
                     child: Text(
                       'Create Account',
