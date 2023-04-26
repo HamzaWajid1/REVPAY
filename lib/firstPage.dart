@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:revpay/Home_Page.dart';
+import 'package:revpay/register.dart';
 import 'package:revpay/verification.dart';
 import 'package:postgres/postgres.dart';
 import 'package:flutter/widgets.dart';
@@ -22,7 +23,7 @@ class firstPageState extends State<firstPage> {
     double width_ = MediaQuery.of(context).size.width;
     double height_ = MediaQuery.of(context).size.height;
     return Scaffold(
-        backgroundColor: Color.fromARGB(255, 243, 239, 239),
+        backgroundColor: Color.fromARGB(255, 252, 251, 251),
         body: ListView(
           shrinkWrap: false,
           children: [
@@ -121,7 +122,10 @@ class firstPageState extends State<firstPage> {
                 style: const ButtonStyle(
                     backgroundColor: MaterialStatePropertyAll<Color>(
                         Color.fromARGB(255, 187, 44, 22))),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => HomePage()));
+                },
                 child: Text(
                   'Login',
                   textScaleFactor: 1.5,
@@ -145,7 +149,7 @@ class firstPageState extends State<firstPage> {
                   bottom: 10,
                   child: Container(
                       padding: const EdgeInsets.only(left: 20, right: 20),
-                      color: Color.fromARGB(255, 243, 239, 239),
+                      color: Color.fromARGB(255, 252, 251, 251),
                       height: 25,
                       // width: 25
                       child: const Text(
@@ -200,7 +204,7 @@ class firstPageState extends State<firstPage> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => HomePage(),
+                            builder: (context) => Myregister(),
                           ));
                     },
                     child: Text(

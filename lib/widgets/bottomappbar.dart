@@ -31,19 +31,13 @@ class _BottomappbarState extends State<CustomBottomappbar> {
                 // color: Color.fromARGB(255, 47, 33, 243),
               )),
           IconButton(
-              onPressed: () {
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => Loan()));
-              },
+              onPressed: () {},
               icon: const Icon(
                 Icons.assessment,
                 size: 32,
               )),
           IconButton(
-              onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => EditProfilePage()));
-              },
+              onPressed: () {},
               icon: const Icon(
                 Icons.menu,
                 size: 32,

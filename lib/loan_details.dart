@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:revpay/Home_Page.dart';
 import 'package:revpay/widgets/bottomappbar.dart';
 
 class Loan extends StatefulWidget {
@@ -14,36 +15,37 @@ class _loanState extends State<Loan> {
   Widget build(BuildContext context) {
     double width_ = MediaQuery.of(context).size.width;
     double height_ = MediaQuery.of(context).size.height;
+
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Color.fromARGB(255, 89, 78, 235),
+        leading: IconButton(
+            onPressed: () {
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => HomePage()));
+            },
+            icon: const Icon(Icons.arrow_back)),
+        title: const Text('Loan Details'),
+        centerTitle: true,
+      ),
       body: SingleChildScrollView(
+          padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
           child: Column(
-        children: [
-          const SizedBox(
-            height: 50,
-          ),
-          Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
-                Text(
-                  '      My Loans',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
-                Icon(
-                  Icons.notifications,
-                )
-              ]),
-          const SizedBox(
-            height: 20,
-          ),
-          loandetail(context, "hamza", '10000', '6'),
-          const SizedBox(height: 20),
-          loandetail(context, "saad", '20000', '8'),
-          const SizedBox(height: 20),
-          loandetail(context, "saad", '20000', '8'),
-          const SizedBox(height: 20),
-          loandetail(context, "saad", '20000', '8'),
-        ],
-      )),
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(
+                height: 50,
+              ),
+              loandetail(context, "hamza", '10000', '6'),
+              const SizedBox(height: 20),
+              loandetail(context, "saad", '20000', '8'),
+              const SizedBox(height: 20),
+              loandetail(context, "saad", '20000', '8'),
+              const SizedBox(height: 20),
+              loandetail(context, "saad", '20000', '8'),
+            ],
+          )),
     );
   }
 }
@@ -57,7 +59,7 @@ Widget loandetail(BuildContext context, String assetName, String asset_value,
   return Container(
       decoration: BoxDecoration(
           // color: Color.fromARGB(255, 37, 24, 215),
-          color: Color.fromARGB(255, 89, 78, 235),
+          color: Color.fromARGB(255, 150, 192, 218),
           // color: Color(0xFF52AA8A),
           borderRadius: BorderRadius.circular(20)),
       width: (width_ * 5) / 6,

@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:revpay/accDetailPage.dart';
+import 'package:revpay/add_loan.dart';
+import 'package:revpay/loan_details.dart';
+import 'package:revpay/send_money.dart';
 import 'package:revpay/widgets/bottomappbar.dart';
 
 class HomePage extends StatefulWidget {
@@ -14,8 +18,8 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: const CustomBottomappbar(),
-      body: SafeArea(
-          minimum: const EdgeInsets.all(20),
+      body: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
           child: Column(
             children: [
               const SizedBox(
@@ -91,15 +95,23 @@ class _HomePageState extends State<HomePage> {
                               fontSize: 30,
                               fontWeight: FontWeight.bold),
                         )),
-                    Container(
-                      width: double.infinity,
-                      alignment: Alignment.centerRight,
-                      child: const Text(
-                        'More details',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            decoration: TextDecoration.underline),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => AccountPage()));
+                      },
+                      child: Container(
+                        width: double.infinity,
+                        alignment: Alignment.centerRight,
+                        child: const Text(
+                          'More details',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              decoration: TextDecoration.underline),
+                        ),
                       ),
                     )
                   ],
@@ -111,86 +123,108 @@ class _HomePageState extends State<HomePage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  Column(children: [
-                    Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                                offset: const Offset(0, 3),
-                                blurRadius: 5,
-                                color: Colors.grey.withOpacity(0.5))
-                          ],
-                          borderRadius: BorderRadius.circular(100),
-                          color: Colors.white),
-                      child: const Icon(
-                        Icons.send,
-                        size: 20,
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => SendMoney()));
+                    },
+                    child: Column(children: [
+                      Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                  offset: const Offset(0, 3),
+                                  blurRadius: 5,
+                                  color: Colors.grey.withOpacity(0.5))
+                            ],
+                            borderRadius: BorderRadius.circular(100),
+                            color: Colors.white),
+                        child: const Icon(
+                          Icons.send,
+                          size: 20,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text('Send')
-                  ]),
-                  Column(children: [
-                    Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                                offset: const Offset(0, 3),
-                                blurRadius: 5,
-                                color: Colors.grey.withOpacity(0.5))
-                          ],
-                          borderRadius: BorderRadius.circular(100),
-                          color: Colors.white),
-                      child: const Icon(
-                        Icons.receipt,
-                        size: 20,
+                      const SizedBox(height: 8),
+                      const Text('Send')
+                    ]),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => EditProfilePage()));
+                    },
+                    child: Column(children: [
+                      Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                  offset: const Offset(0, 3),
+                                  blurRadius: 5,
+                                  color: Colors.grey.withOpacity(0.5))
+                            ],
+                            borderRadius: BorderRadius.circular(100),
+                            color: Colors.white),
+                        child: const Icon(
+                          Icons.call_received,
+                          size: 20,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text('Recieve')
-                  ]),
-                  Column(children: [
-                    Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                                offset: const Offset(0, 3),
-                                blurRadius: 5,
-                                color: Colors.grey.withOpacity(0.5))
-                          ],
-                          borderRadius: BorderRadius.circular(100),
-                          color: Colors.white),
-                      child: const Icon(
-                        Icons.money,
-                        size: 20,
+                      const SizedBox(height: 8),
+                      const Text('Receive')
+                    ]),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => Loan()));
+                    },
+                    child: Column(children: [
+                      Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                  offset: const Offset(0, 3),
+                                  blurRadius: 5,
+                                  color: Colors.grey.withOpacity(0.5))
+                            ],
+                            borderRadius: BorderRadius.circular(100),
+                            color: Colors.white),
+                        child: const Icon(
+                          Icons.info,
+                          size: 20,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text('Load')
-                  ]),
-                  Column(children: [
-                    Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                                offset: const Offset(0, 3),
-                                blurRadius: 5,
-                                color: Colors.grey.withOpacity(0.5))
-                          ],
-                          borderRadius: BorderRadius.circular(100),
-                          color: Colors.white),
-                      child: const Icon(
-                        Icons.more,
-                        size: 20,
+                      const SizedBox(height: 8),
+                      const Text('Loans')
+                    ]),
+                  ),
+                  GestureDetector(
+                    child: Column(children: [
+                      Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                  offset: const Offset(0, 3),
+                                  blurRadius: 5,
+                                  color: Colors.grey.withOpacity(0.5))
+                            ],
+                            borderRadius: BorderRadius.circular(100),
+                            color: Colors.white),
+                        child: const Icon(
+                          Icons.send,
+                          size: 20,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text('More')
-                  ]),
+                      const SizedBox(height: 8),
+                      const Text('More')
+                    ]),
+                  ),
                 ],
               ),
               const SizedBox(
