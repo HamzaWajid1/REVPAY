@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:revpay/Home_Page.dart';
 import 'package:revpay/model/loan.dart';
-
+import 'package:postgres/postgres.dart';
 import 'package:revpay/widgets/textfield_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -14,12 +14,13 @@ class SendMoney extends StatefulWidget {
 
 class _SendMoneyState extends State<SendMoney> {
   double amount = 0;
-  double account = 0;
-  String purpose = "";
+  int send_account = 0;
+  int rec_account = 0;
+  String purpose = '';
 
   final TextEditingController _accountnum = TextEditingController();
   late String? nameError = null;
-
+  final TextEditingController _rec_accountnum = TextEditingController();
   final TextEditingController _value = TextEditingController();
   late String? valueError = null;
 
@@ -95,32 +96,50 @@ class _SendMoneyState extends State<SendMoney> {
                 physics: const BouncingScrollPhysics(),
                 children: [
                   TextFieldWidget(
-                      errorMessage: nameError,
-                      textInputType: TextInputType.number,
-                      controller1: _accountnum,
-                      label: 'Account Number',
-                      text: account.toString(),
-                      onChanged: (name) async {
-                        SharedPreferences prefs =
-                            await SharedPreferences.getInstance();
-                        prefs.setString("hamza", name);
-                      }),
+                    onChanged: (value) {
+                      debugPrint(_accountnum.text);
+                      send_account = int.parse(_accountnum.text);
+                      debugPrint("hamza is a $send_account");
+                    },
+                    errorMessage: nameError,
+                    textInputType: TextInputType.number,
+                    controller1: _accountnum,
+                    label: 'Sender Account Number',
+                    text: _accountnum.text,
+                  ),
+                  const SizedBox(height: 40),
+                  TextFieldWidget(
+                    errorMessage: nameError,
+                    textInputType: TextInputType.number,
+                    controller1: _rec_accountnum,
+                    label: 'Receiver Account Number',
+                    text: _rec_accountnum.text,
+                    onChanged: (name) async {
+                      // Parse the text value to an integer and assign it to the variable
+                      rec_account = int.tryParse(_rec_accountnum.text) ??
+                          5; // assign 0 if the parsing fails
+                    },
+                  ),
                   const SizedBox(height: 40),
                   TextFieldWidget(
                       errorMessage: valueError,
                       textInputType: TextInputType.number,
                       controller1: _value,
                       label: 'Amount',
-                      text: amount.toString(),
-                      onChanged: (value) {}),
+                      text: _value.text,
+                      onChanged: (value) {
+                        amount = double.parse(_value.text);
+                      }),
                   const SizedBox(height: 40),
                   TextFieldWidget(
                       errorMessage: periodError,
                       textInputType: TextInputType.text,
                       controller1: _purpose,
                       label: 'Purpose Of Payement',
-                      text: purpose,
-                      onChanged: (period) {}),
+                      text: _purpose.text,
+                      onChanged: (period) {
+                        purpose = _purpose.text;
+                      }),
                   const SizedBox(height: 40),
                   Container(
                       color: const Color.fromRGBO(2, 2, 2, 0),
@@ -139,6 +158,9 @@ class _SendMoneyState extends State<SendMoney> {
                           child: const Text("Send Amount",
                               style: TextStyle(fontSize: 22)),
                           onPressed: () {
+                            debugPrint('$amount');
+                            debugPrint('$rec_account');
+                            Send(amount, send_account, rec_account, purpose);
                             if (_accountnum.text.isEmpty) {
                               nameError = 'This field is empty';
                             }
@@ -166,4 +188,45 @@ class _SendMoneyState extends State<SendMoney> {
           ),
         ]));
   }
+}
+
+void Send(
+    double amount, int send_account, int rec_account, String purpose) async {
+  var conn1 = PostgreSQLConnection('192.168.10.10', 5432, 'RevPay',
+      username: 'postgres', password: 'Hamza.paracha1');
+  debugPrint('${conn1.port}');
+  debugPrint('$amount');
+  debugPrint('$rec_account');
+  await conn1.open().then((value) => debugPrint("hamza"));
+  await conn1.query('''
+  UPDATE bank_account
+SET amount_present = amount_present+${amount}
+WHERE acc_num=${rec_account};
+   ''');
+  await conn1.query('''
+  UPDATE bank_account
+SET amount_present = amount_present-${amount}
+WHERE acc_num=${send_account};
+   ''');
+
+  await conn1.query('''
+  insert into deposit_or_withdrawl(amount,cnic_num,acc_num)
+	 values(-$amount,$send_account,$send_account);
+   
+
+''');
+  await conn1.query('''
+  insert into deposit_or_withdrawl(amount,cnic_num,acc_num)
+	 values(+$amount,$rec_account,$rec_account);
+   
+
+''');
+  await conn1.query('''
+  insert into money_transfer(acc_num_one,acc_num_two,amount,tod)
+	 values($send_account,$rec_account,$amount,CURRENT_DATE);
+   
+
+''');
+
+  await conn1.close();
 }

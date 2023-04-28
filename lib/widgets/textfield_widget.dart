@@ -3,13 +3,14 @@ import 'package:flutter/material.dart';
 class TextFieldWidget extends StatefulWidget {
   final String label;
   final String text;
-  final ValueChanged<String> onChanged;
+  void Function(String)? onChanged;
+  //final ValueChanged<String> onChanged;
   final TextEditingController controller1;
   final TextInputType? textInputType;
   final String? errorMessage;
   final bool disabled;
 
-  const TextFieldWidget(
+  TextFieldWidget(
       {Key? key,
       required this.label,
       required this.text,
@@ -36,9 +37,9 @@ class TextfieldWidgetState extends State<TextFieldWidget> {
 
   @override
   void dispose() {
-    controller.dispose();
+    //controller.dispose();
 
-    super.dispose();
+    //super.dispose();
   }
 
   @override
@@ -59,6 +60,7 @@ class TextfieldWidgetState extends State<TextFieldWidget> {
                   width: 100,
                   alignment: Alignment.bottomCenter,
                   child: TextField(
+                    onChanged: widget.onChanged,
                     readOnly: widget.disabled,
                     keyboardType: widget.textInputType,
                     controller: widget.controller1,

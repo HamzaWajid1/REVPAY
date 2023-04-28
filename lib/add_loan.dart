@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:revpay/Home_Page.dart';
 import 'package:revpay/model/loan.dart';
-
+import 'package:postgres/postgres.dart';
 import 'package:revpay/widgets/textfield_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -13,10 +13,14 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class Editprofilepagestate extends State<EditProfilePage> {
+  String cnic1 = '';
+  int cnic2 = 0;
+  double pw = 0;
+  double p = 0;
   Loan loan = Loan("", "", "");
   final TextEditingController _name = TextEditingController();
   late String? nameError = null;
-
+  final TextEditingController cnic = TextEditingController();
   final TextEditingController _value = TextEditingController();
   late String? valueError = null;
 
@@ -93,14 +97,22 @@ class Editprofilepagestate extends State<EditProfilePage> {
                 children: [
                   TextFieldWidget(
                       errorMessage: nameError,
+                      textInputType: TextInputType.number,
+                      controller1: cnic,
+                      label: 'CNIC',
+                      text: cnic.text,
+                      onChanged: (value) {
+                        cnic2 = int.parse(cnic.text);
+                      }),
+                  const SizedBox(height: 40),
+                  TextFieldWidget(
+                      errorMessage: nameError,
                       textInputType: TextInputType.name,
                       controller1: _name,
                       label: 'Asset Name',
-                      text: loan.assetName,
-                      onChanged: (name) async {
-                        SharedPreferences prefs =
-                            await SharedPreferences.getInstance();
-                        prefs.setString("hamza", name);
+                      text: _name.text,
+                      onChanged: (value) {
+                        loan.assetName = _name.text;
                       }),
                   const SizedBox(height: 40),
                   TextFieldWidget(
@@ -108,16 +120,20 @@ class Editprofilepagestate extends State<EditProfilePage> {
                       textInputType: TextInputType.number,
                       controller1: _value,
                       label: 'Asset Value',
-                      text: loan.assetPresentValue,
-                      onChanged: (value) {}),
+                      text: _value.text,
+                      onChanged: (value) {
+                        pw = double.parse(_value.text);
+                      }),
                   const SizedBox(height: 40),
                   TextFieldWidget(
                       errorMessage: periodError,
                       textInputType: TextInputType.number,
                       controller1: _period,
                       label: 'Loan Period',
-                      text: loan.loanPeriod,
-                      onChanged: (period) {}),
+                      text: _period.text,
+                      onChanged: (period) {
+                        p = double.parse(_period.text);
+                      }),
                   const SizedBox(height: 40),
                   Container(
                       color: const Color.fromRGBO(2, 2, 2, 0),
@@ -136,6 +152,12 @@ class Editprofilepagestate extends State<EditProfilePage> {
                           child: const Text("Add Loan",
                               style: TextStyle(fontSize: 22)),
                           onPressed: () {
+                            debugPrint('$cnic2');
+                            debugPrint('$pw');
+                            debugPrint('$p');
+                            debugPrint('${loan.assetName}');
+                            adding_loan(cnic2, loan.assetName, pw, p);
+
                             if (_name.text.isEmpty) {
                               nameError = 'This field is empty';
                             }
@@ -163,4 +185,28 @@ class Editprofilepagestate extends State<EditProfilePage> {
           ),
         ]));
   }
+}
+
+void adding_loan(
+    int cnic, String asset_name, double asset_value, double period) async {
+  double mon = asset_value / (12.0 * period);
+  int pa = period.toInt();
+  var conn = PostgreSQLConnection('192.168.10.10', 5432, 'RevPay',
+      username: 'postgres', password: 'Hamza.paracha1');
+  debugPrint('${conn.port}');
+
+  await conn.open();
+  await conn.query('''
+  insert into asset_loan(monthly_payment,expected_loan_completion_date,loan_given_date,bank_id,years_of_contract,asset_name,asset_present_value,account_num)
+	 values($mon,CURRENT_DATE+($pa*365),CURRENT_DATE,1,$period,'$asset_name',$asset_value,$cnic);
+   
+
+''');
+  await conn.query('''
+  UPDATE bank_account
+SET amount_present = amount_present+$asset_value
+WHERE acc_num=$cnic;
+   ''');
+
+  await conn.close();
 }

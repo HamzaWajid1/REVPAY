@@ -16,6 +16,8 @@ class firstPage extends StatefulWidget {
 }
 
 class firstPageState extends State<firstPage> {
+  int cnic1 = 0;
+  String password_ = '';
   late TextEditingController _email = TextEditingController();
   late TextEditingController _password = TextEditingController();
   @override
@@ -60,6 +62,9 @@ class firstPageState extends State<firstPage> {
                   SizedBox(
                     height: height_ / 19,
                     child: TextField(
+                      onChanged: (value) {
+                        cnic1 = int.parse(_email.text);
+                      },
                       textAlignVertical: TextAlignVertical.bottom,
                       //scrollPadding: EdgeInsets.fromLTRB(50, 0, 20, 0),
                       controller: _email,
@@ -72,7 +77,7 @@ class firstPageState extends State<firstPage> {
                               borderSide: BorderSide(
                                   color: Color.fromARGB(150, 102, 107, 110),
                                   width: 20)),
-                          hintText: 'Email'),
+                          hintText: 'CNIC'),
                     ),
                   ),
                   SizedBox(
@@ -81,6 +86,9 @@ class firstPageState extends State<firstPage> {
                   SizedBox(
                     height: height_ / 19,
                     child: TextField(
+                      onChanged: (value) {
+                        password_ = _password.text;
+                      },
                       textAlignVertical: TextAlignVertical.bottom,
                       //scrollPadding: EdgeInsets.fromLTRB(50, 0, 20, 0),
                       controller: _password,
@@ -123,8 +131,7 @@ class firstPageState extends State<firstPage> {
                     backgroundColor: MaterialStatePropertyAll<Color>(
                         Color.fromARGB(255, 187, 44, 22))),
                 onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => HomePage()));
+                  login(context, cnic1, password_);
                 },
                 child: Text(
                   'Login',
@@ -222,8 +229,8 @@ class firstPageState extends State<firstPage> {
 }
 
 void check() async {
-  var conn = PostgreSQLConnection('127.0.0.1', 5432, 'RevPay',
-      username: 'postgres', password: ' Hamza.paracha1');
+  var conn = PostgreSQLConnection('192.168.10.10', 5432, 'RevPay',
+      username: 'postgres', password: 'Hamza.paracha1');
   debugPrint('${conn.port}');
 
   await conn.open();
@@ -239,5 +246,33 @@ void check() async {
   conn.open().then((value) {
     debugPrint('hello');
   });
+  await conn.close();
+}
+
+void login(BuildContext context, int cnic, String password) async {
+  var conn = PostgreSQLConnection('192.168.10.10', 5432, 'RevPay',
+      username: 'postgres', password: 'Hamza.paracha1');
+  debugPrint('${conn.port}');
+
+  await conn.open();
+  List<List<dynamic>> results = await conn.query('''
+    SELECT cnic_num
+    FROM _password
+    WHERE cnic_num = '$cnic' and password_='$password';
+  ''');
+  List<List<dynamic>> results1 = await conn.query('''
+    SELECT password_
+    FROM _password
+    WHERE cnic_num = '$cnic' and password_='$password';
+  ''');
+
+  int checkcnic = results.first.first;
+  String checkpassword = results1.first.first;
+
+  if (checkcnic == cnic && checkpassword == password) {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => HomePage()));
+  }
+
   await conn.close();
 }
