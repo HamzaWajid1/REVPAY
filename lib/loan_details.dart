@@ -27,6 +27,7 @@ class _loanState extends State<Loan> {
   Future<dynamic> getLoanDetails() async {
     loans = await PostgreConnectionParameters.query(
         'SELECT monthly_payment, expected_loan_completion_date, loan_given_date, years_of_contract, asset_name, asset_present_value FROM asset_loan');
+    print(loans);
     return true;
   }
 
@@ -42,7 +43,7 @@ class _loanState extends State<Loan> {
         centerTitle: true,
       ),
       body: SingleChildScrollView(
-          padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
+          padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -68,9 +69,12 @@ Widget loandetail(BuildContext context, String assetName, double asset_value,
     DateTime loan_period) {
   double width_ = MediaQuery.of(context).size.width;
   double height_ = MediaQuery.of(context).size.height;
-  double per = loan_period.year * 12;
+  debugPrint('${loan_period.year}');
+  double per = (loan_period.year - 2023) * 12;
+
   double montpay = asset_value / per;
   return Container(
+      margin: const EdgeInsets.only(top: 10),
       decoration: BoxDecoration(
           // color: Color.fromARGB(255, 37, 24, 215),
           color: Color.fromARGB(255, 150, 192, 218),
@@ -78,7 +82,7 @@ Widget loandetail(BuildContext context, String assetName, double asset_value,
           borderRadius: BorderRadius.circular(20)),
       width: (width_ * 5) / 6,
       padding: const EdgeInsets.all(20),
-      height: height_ / 3.42,
+      height: height_ / 3,
       child: Column(children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -146,16 +150,27 @@ Widget loandetail(BuildContext context, String assetName, double asset_value,
                   fontSize: 20,
                   fontWeight: FontWeight.bold),
             )),
-        Container(
+        const SizedBox(
+          height: 5,
+        ),
+        const SizedBox(
           width: double.infinity,
-          alignment: Alignment.centerRight,
-          child: const Text(
-            'More details',
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                decoration: TextDecoration.underline),
+          child: Text(
+            'Expected Completion year',
+            style: TextStyle(color: Colors.white, fontSize: 15),
           ),
-        )
+        ),
+        const SizedBox(
+          height: 5,
+        ),
+        SizedBox(
+            width: double.infinity,
+            child: Text(
+              '${loan_period.year}',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold),
+            )),
       ]));
 }

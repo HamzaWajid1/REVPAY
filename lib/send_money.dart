@@ -8,7 +8,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'model/postgre_connection_parameters.dart';
 
 class SendMoney extends StatefulWidget {
-  const SendMoney({super.key});
+  const SendMoney({super.key, required this.user});
+  final user;
 
   @override
   State<SendMoney> createState() => _SendMoneyState();
@@ -171,7 +172,11 @@ class _SendMoneyState extends State<SendMoney> {
                             storeData();
                             initialGetSavedData();
 
-                            Navigator.pop(context);
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        HomePage(user: widget.user)));
                           })),
                 ]),
           ),
