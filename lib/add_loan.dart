@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:revpay/Home_Page.dart';
 import 'package:revpay/model/loan.dart';
 import 'package:postgres/postgres.dart';
+import 'package:revpay/model/postgre_connection_parameters.dart';
 import 'package:revpay/widgets/textfield_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -52,12 +53,6 @@ class Editprofilepagestate extends State<EditProfilePage> {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Color.fromARGB(255, 89, 78, 235),
-          leading: IconButton(
-              onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => HomePage()));
-              },
-              icon: const Icon(Icons.arrow_back)),
           title: const Text('New Loan Details'),
           centerTitle: true,
         ),
@@ -172,14 +167,7 @@ class Editprofilepagestate extends State<EditProfilePage> {
                             storeData();
                             initialGetSavedData();
 
-                            if (_name.text.isNotEmpty &&
-                                _value.text.isNotEmpty &&
-                                _period.text.isNotEmpty) {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => HomePage()));
-                            }
+                            Navigator.pop(context);
                           })),
                 ]),
           ),
@@ -191,8 +179,12 @@ void adding_loan(
     int cnic, String asset_name, double asset_value, double period) async {
   double mon = asset_value / (12.0 * period);
   int pa = period.toInt();
-  var conn = PostgreSQLConnection('192.168.10.10', 5432, 'RevPay',
-      username: 'postgres', password: 'Hamza.paracha1');
+  var conn = PostgreSQLConnection(
+      PostgreConnectionParameters.ip,
+      PostgreConnectionParameters.port,
+      PostgreConnectionParameters.databaseName,
+      username: PostgreConnectionParameters.username,
+      password: PostgreConnectionParameters.password);
   debugPrint('${conn.port}');
 
   await conn.open();

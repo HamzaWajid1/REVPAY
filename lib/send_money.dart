@@ -5,6 +5,8 @@ import 'package:postgres/postgres.dart';
 import 'package:revpay/widgets/textfield_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'model/postgre_connection_parameters.dart';
+
 class SendMoney extends StatefulWidget {
   const SendMoney({super.key});
 
@@ -52,12 +54,6 @@ class _SendMoneyState extends State<SendMoney> {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Color.fromARGB(255, 89, 78, 235),
-          leading: IconButton(
-              onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => HomePage()));
-              },
-              icon: const Icon(Icons.arrow_back)),
           title: const Text('Sending Information'),
           centerTitle: true,
         ),
@@ -175,14 +171,7 @@ class _SendMoneyState extends State<SendMoney> {
                             storeData();
                             initialGetSavedData();
 
-                            if (_accountnum.text.isNotEmpty &&
-                                _value.text.isNotEmpty &&
-                                _purpose.text.isNotEmpty) {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => HomePage()));
-                            }
+                            Navigator.pop(context);
                           })),
                 ]),
           ),
@@ -192,41 +181,33 @@ class _SendMoneyState extends State<SendMoney> {
 
 void Send(
     double amount, int send_account, int rec_account, String purpose) async {
-  var conn1 = PostgreSQLConnection('192.168.10.10', 5432, 'RevPay',
-      username: 'postgres', password: 'Hamza.paracha1');
-  debugPrint('${conn1.port}');
-  debugPrint('$amount');
-  debugPrint('$rec_account');
-  await conn1.open().then((value) => debugPrint("hamza"));
-  await conn1.query('''
+  await PostgreConnectionParameters.query('''
   UPDATE bank_account
 SET amount_present = amount_present+${amount}
 WHERE acc_num=${rec_account};
    ''');
-  await conn1.query('''
+  await PostgreConnectionParameters.query('''
   UPDATE bank_account
 SET amount_present = amount_present-${amount}
 WHERE acc_num=${send_account};
    ''');
 
-  await conn1.query('''
+  await PostgreConnectionParameters.query('''
   insert into deposit_or_withdrawl(amount,cnic_num,acc_num)
 	 values(-$amount,$send_account,$send_account);
    
 
 ''');
-  await conn1.query('''
+  await PostgreConnectionParameters.query('''
   insert into deposit_or_withdrawl(amount,cnic_num,acc_num)
 	 values(+$amount,$rec_account,$rec_account);
    
 
 ''');
-  await conn1.query('''
-  insert into money_transfer(acc_num_one,acc_num_two,amount,tod)
-	 values($send_account,$rec_account,$amount,CURRENT_DATE);
+  await PostgreConnectionParameters.query('''
+  insert into money_transfer(acc_num_one,acc_num_two,amount)
+	 values($send_account,$rec_account,$amount);
    
 
 ''');
-
-  await conn1.close();
 }

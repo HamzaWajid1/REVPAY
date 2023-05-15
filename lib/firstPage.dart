@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:revpay/Home_Page.dart';
+import 'package:revpay/model/User.dart';
+import 'package:revpay/model/postgre_connection_parameters.dart';
 import 'package:revpay/register.dart';
 import 'package:revpay/verification.dart';
 import 'package:postgres/postgres.dart';
@@ -41,7 +43,7 @@ class firstPageState extends State<firstPage> {
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     image: const DecorationImage(
-                      image: AssetImage('assets/dld.jpg'),
+                      image: AssetImage('assets/credit-card.png'),
                       fit: BoxFit.fill,
                     ),
                   )),
@@ -105,7 +107,7 @@ class firstPageState extends State<firstPage> {
                   ),
                   Container(
                     padding: EdgeInsets.only(top: height_ / 200),
-                    width: double.infinity,
+                    width: width_ / 2,
                     child: RichText(
                       textAlign: TextAlign.end,
                       text: TextSpan(
@@ -124,12 +126,12 @@ class firstPageState extends State<firstPage> {
             ),
             //SizedBox(height: height_ / 50),
             Container(
-              width: width_ / 2,
+              width: double.infinity,
               alignment: Alignment.center,
               child: ElevatedButton(
                 style: const ButtonStyle(
                     backgroundColor: MaterialStatePropertyAll<Color>(
-                        Color.fromARGB(255, 187, 44, 22))),
+                        Color.fromARGB(255, 22, 47, 187))),
                 onPressed: () {
                   login(context, cnic1, password_);
                 },
@@ -217,7 +219,7 @@ class firstPageState extends State<firstPage> {
                     child: Text(
                       'Create Account',
                       textScaleFactor: 1.5,
-                      style: TextStyle(color: Colors.red),
+                      style: TextStyle(color: Color.fromARGB(255, 22, 47, 187)),
                     ),
                   ),
                 )
@@ -228,39 +230,13 @@ class firstPageState extends State<firstPage> {
   }
 }
 
-void check() async {
-  var conn = PostgreSQLConnection('192.168.10.10', 5432, 'RevPay',
-      username: 'postgres', password: 'Hamza.paracha1');
-  debugPrint('${conn.port}');
-
-  await conn.open();
-  await conn.query('''
-  insert into mybank(bank_id,daily_cash_flow,loan_given_amount,
-				  industrial_investment_growth,gold_worth,cash_worth
-				  
-				  )
-				  values(2,0,0,0,0,0);
-   
-
-''');
-  conn.open().then((value) {
-    debugPrint('hello');
-  });
-  await conn.close();
-}
-
 void login(BuildContext context, int cnic, String password) async {
-  var conn = PostgreSQLConnection('192.168.10.10', 5432, 'RevPay',
-      username: 'postgres', password: 'Hamza.paracha1');
-  debugPrint('${conn.port}');
-
-  await conn.open();
-  List<List<dynamic>> results = await conn.query('''
+  List<List<dynamic>> results = await PostgreConnectionParameters.query('''
     SELECT cnic_num
     FROM _password
     WHERE cnic_num = '$cnic' and password_='$password';
   ''');
-  List<List<dynamic>> results1 = await conn.query('''
+  List<List<dynamic>> results1 = await PostgreConnectionParameters.query('''
     SELECT password_
     FROM _password
     WHERE cnic_num = '$cnic' and password_='$password';
@@ -270,9 +246,33 @@ void login(BuildContext context, int cnic, String password) async {
   String checkpassword = results1.first.first;
 
   if (checkcnic == cnic && checkpassword == password) {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => HomePage()));
-  }
+    List<List<dynamic>> userDetails = await PostgreConnectionParameters.query(
+        'SELECT user_name, yearly_income, marital_status, address, designation, date_of_birth, cnic_number FROM users WHERE cnic_number=$checkcnic');
 
-  await conn.close();
+    List<List<dynamic>> accountNumber = await PostgreConnectionParameters.query(
+        'SELECT acc_num FROM user_bank WHERE cnic_num=$checkcnic');
+
+    List<List<dynamic>> balance = await PostgreConnectionParameters.query(
+        'SELECT amount_present FROM bank_account WHERE acc_num=${accountNumber.first.first}');
+
+    print(userDetails);
+    print(accountNumber);
+    print(balance);
+    User user = User(
+        userName: userDetails.first[0],
+        mobileNumber: '',
+        yearlyIncome: userDetails.first[1],
+        maritalStatus: userDetails.first[2],
+        address: userDetails.first[3],
+        designation: userDetails.first[4],
+        dateOfBirth: userDetails.first[5],
+        cnicNumber: userDetails.first[6],
+        balance: balance.first.first);
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => HomePage(
+                  user: user,
+                )));
+  }
 }

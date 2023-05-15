@@ -6,8 +6,12 @@ import 'package:revpay/loan_details.dart';
 import 'package:revpay/send_money.dart';
 import 'package:revpay/widgets/bottomappbar.dart';
 
+import 'model/User.dart';
+
 class AccountPage extends StatefulWidget {
-  const AccountPage({Key? key}) : super(key: key);
+  const AccountPage({Key? key, required this.user}) : super(key: key);
+
+  final User user;
 
   @override
   State<AccountPage> createState() => _AccountPageState();
@@ -54,7 +58,7 @@ class _AccountPageState extends State<AccountPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(children: const [
+                        Row(children: [
                           SizedBox(
                               height: 40,
                               width: 40,
@@ -63,7 +67,7 @@ class _AccountPageState extends State<AccountPage> {
                             width: 20,
                           ),
                           Text(
-                            '**** 2236',
+                            widget.user.cnicNumber.toString(),
                             style: TextStyle(color: Colors.white, fontSize: 16),
                           )
                         ]),
@@ -86,10 +90,10 @@ class _AccountPageState extends State<AccountPage> {
                     const SizedBox(
                       height: 5,
                     ),
-                    const SizedBox(
+                    SizedBox(
                         width: double.infinity,
                         child: Text(
-                          '\$ 5300.00',
+                          '\$ ${widget.user.balance}',
                           style: TextStyle(
                               color: Colors.white,
                               fontSize: 30,
@@ -97,10 +101,7 @@ class _AccountPageState extends State<AccountPage> {
                         )),
                     GestureDetector(
                       onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => HomePage()));
+                        Navigator.pop(context);
                       },
                       child: Container(
                         width: double.infinity,
@@ -127,10 +128,10 @@ class _AccountPageState extends State<AccountPage> {
                     const SizedBox(
                       height: 5,
                     ),
-                    const SizedBox(
+                    SizedBox(
                         width: double.infinity,
                         child: Text(
-                          'Hamza',
+                          widget.user.userName,
                           style: TextStyle(
                               color: Colors.white,
                               fontSize: 25,
@@ -149,10 +150,10 @@ class _AccountPageState extends State<AccountPage> {
                     const SizedBox(
                       height: 5,
                     ),
-                    const SizedBox(
+                    SizedBox(
                         width: double.infinity,
                         child: Text(
-                          '37405-6879677-7',
+                          widget.user.cnicNumber.toString(),
                           style: TextStyle(
                               color: Colors.white,
                               fontSize: 25,
@@ -171,10 +172,10 @@ class _AccountPageState extends State<AccountPage> {
                     const SizedBox(
                       height: 5,
                     ),
-                    const SizedBox(
+                    SizedBox(
                         width: double.infinity,
                         child: Text(
-                          '\$ 92-321-6879672',
+                          '03465479181',
                           style: TextStyle(
                               color: Colors.white,
                               fontSize: 25,
@@ -193,10 +194,10 @@ class _AccountPageState extends State<AccountPage> {
                     const SizedBox(
                       height: 5,
                     ),
-                    const SizedBox(
+                    SizedBox(
                         width: double.infinity,
                         child: Text(
-                          '\$ 1000',
+                          widget.user.yearlyIncome.toString(),
                           style: TextStyle(
                               color: Colors.white,
                               fontSize: 25,
@@ -215,10 +216,10 @@ class _AccountPageState extends State<AccountPage> {
                     const SizedBox(
                       height: 5,
                     ),
-                    const SizedBox(
+                    SizedBox(
                         width: double.infinity,
                         child: Text(
-                          'Single',
+                          widget.user.maritalStatus,
                           style: TextStyle(
                               color: Colors.white,
                               fontSize: 25,
@@ -237,10 +238,10 @@ class _AccountPageState extends State<AccountPage> {
                     const SizedBox(
                       height: 5,
                     ),
-                    const SizedBox(
+                    SizedBox(
                         width: double.infinity,
                         child: Text(
-                          'house#7a,street#1,blockG,soanGarden,Islamabad',
+                          widget.user.address,
                           style: TextStyle(
                               color: Colors.white,
                               fontSize: 25,
@@ -256,10 +257,10 @@ class _AccountPageState extends State<AccountPage> {
                     const SizedBox(
                       height: 5,
                     ),
-                    const SizedBox(
+                    SizedBox(
                         width: double.infinity,
                         child: Text(
-                          '\$ Cs Student',
+                          widget.user.designation,
                           style: TextStyle(
                               color: Colors.white,
                               fontSize: 25,
@@ -278,10 +279,10 @@ class _AccountPageState extends State<AccountPage> {
                     const SizedBox(
                       height: 5,
                     ),
-                    const SizedBox(
+                    SizedBox(
                         width: double.infinity,
                         child: Text(
-                          '26-08-2002',
+                          widget.user.dateOfBirth.toString(),
                           style: TextStyle(
                               color: Colors.white,
                               fontSize: 25,

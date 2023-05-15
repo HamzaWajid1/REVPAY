@@ -16,7 +16,7 @@ class Verification extends StatefulWidget {
 class VerificationState extends State<Verification> {
   String verificationCode = '';
   late SharedPreferences sharedPreferences;
-  a.User user = a.User("", "", "", "", "", "");
+  // a.User user = a.User("", "", 2, 2);
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   void initialGetSavedData() async {
     sharedPreferences = await SharedPreferences.getInstance();
@@ -57,7 +57,7 @@ class VerificationState extends State<Verification> {
                     print('value is ${value.user}');
                     if (value.user != null) {
                       setState(() {
-                        user.mobileNumber = widget.phone;
+                        // user.mobileNumber = widget.phone;
                       });
                       Navigator.push(
                           context,

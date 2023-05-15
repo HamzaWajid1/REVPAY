@@ -4,6 +4,8 @@ import 'package:postgres/postgres.dart';
 import 'package:revpay/firstPage.dart';
 import 'package:revpay/widgets/textfield_widget.dart';
 
+import 'model/postgre_connection_parameters.dart';
+
 class Myregister extends StatefulWidget {
   const Myregister({Key? key}) : super(key: key);
 
@@ -259,73 +261,35 @@ void register(
     String designation1,
     String email1,
     String dob1) async {
-  var conn = PostgreSQLConnection('192.168.10.10', 5432, 'RevPay',
-      username: 'postgres', password: 'Hamza.paracha1');
-  debugPrint('${conn.port}');
-
-  await conn.open();
-  await conn.query('''
+  await PostgreConnectionParameters.query('''
   insert into users(user_name,bank_id,yearly_income,marital_status,cnic_number,ph_no,address,designation,email,date_of_birth)
 	values('${name1}',${bank_id1},${yearly_income1},'${maritial_status1}',${cnic_number1},'${phone1}','${address1}','${designation1}','${email1}','2002-01-01');
    
 
 ''');
-  conn.open().then((value) {
-    debugPrint('hello');
-  });
-  await conn.close();
 }
 
 void login_register(int cnic, String password) async {
-  var conn = PostgreSQLConnection('192.168.10.10', 5432, 'RevPay',
-      username: 'postgres', password: 'Hamza.paracha1');
-  debugPrint('${conn.port}');
-
-  await conn.open();
-  await conn.query('''
+  await PostgreConnectionParameters.query('''
   insert into _password(cnic_num,password_)
 				  values(${cnic},'${password}');
    
 
 ''');
-  conn.open().then((value) {
-    debugPrint('hello');
-  });
-  await conn.close();
 }
 
 void Account_register(int cnic) async {
-  var conn = PostgreSQLConnection('192.168.10.10', 5432, 'RevPay',
-      username: 'postgres', password: 'Hamza.paracha1');
-  debugPrint('${conn.port}');
-
-  await conn.open();
-  await conn.query('''
+  await PostgreConnectionParameters.query('''
   insert into bank_account(acc_num,creation_date,amount_present,bank_id)
 				  values(${cnic},CURRENT_DATE,0.0,1);
    
 
 ''');
-  conn.open().then((value) {
-    debugPrint('hello');
-  });
-  await conn.close();
 }
 
 void user_bank(int cnic) async {
-  var conn = PostgreSQLConnection('192.168.10.10', 5432, 'RevPay',
-      username: 'postgres', password: 'Hamza.paracha1');
-  debugPrint('${conn.port}');
-
-  await conn.open();
-  await conn.query('''
+  await PostgreConnectionParameters.query('''
   insert into user_bank(cnic_num,acc_num)
 				  values(${cnic},${cnic});
-   
-
 ''');
-  conn.open().then((value) {
-    debugPrint('hello');
-  });
-  await conn.close();
 }

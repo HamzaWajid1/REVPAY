@@ -3,17 +3,32 @@ import 'package:intl/intl.dart';
 import 'package:revpay/accDetailPage.dart';
 import 'package:revpay/add_loan.dart';
 import 'package:revpay/loan_details.dart';
+import 'package:revpay/model/User.dart';
+import 'package:revpay/model/postgre_connection_parameters.dart';
 import 'package:revpay/send_money.dart';
 import 'package:revpay/widgets/bottomappbar.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
-
+  const HomePage({Key? key, required this.user}) : super(key: key);
+  final User user;
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
+  List<List<dynamic>> recentTransactions = [[]];
+  @override
+  void initState() {
+    super.initState();
+    retrieveRecentTransactions();
+  }
+
+  Future<dynamic> retrieveRecentTransactions() async {
+    recentTransactions = await PostgreConnectionParameters.query(
+        'SELECT amount, user_name FROM deposit_or_withdrawl INNER JOIN users ON users.cnic_number = deposit_or_withdrawl.cnic_num WHERE cnic_num=${widget.user.cnicNumber}');
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,17 +69,18 @@ class _HomePageState extends State<HomePage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(children: const [
-                          SizedBox(
+                        Row(children: [
+                          const SizedBox(
                               height: 40,
                               width: 40,
                               child: Image(image: AssetImage('assets/cc.png'))),
-                          SizedBox(
+                          const SizedBox(
                             width: 20,
                           ),
                           Text(
-                            '**** 2236',
-                            style: TextStyle(color: Colors.white, fontSize: 16),
+                            widget.user.cnicNumber.toString(),
+                            style: const TextStyle(
+                                color: Colors.white, fontSize: 16),
                           )
                         ]),
                         const Text(
@@ -86,11 +102,11 @@ class _HomePageState extends State<HomePage> {
                     const SizedBox(
                       height: 5,
                     ),
-                    const SizedBox(
+                    SizedBox(
                         width: double.infinity,
                         child: Text(
-                          '\$ 5300.00',
-                          style: TextStyle(
+                          '\$ ${widget.user.balance}',
+                          style: const TextStyle(
                               color: Colors.white,
                               fontSize: 30,
                               fontWeight: FontWeight.bold),
@@ -100,7 +116,9 @@ class _HomePageState extends State<HomePage> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => AccountPage()));
+                                builder: (context) => AccountPage(
+                                      user: widget.user,
+                                    )));
                       },
                       child: Container(
                         width: double.infinity,
@@ -125,8 +143,10 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => SendMoney()));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const SendMoney()));
                     },
                     child: Column(children: [
                       Container(
@@ -154,7 +174,7 @@ class _HomePageState extends State<HomePage> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => EditProfilePage()));
+                              builder: (context) => const EditProfilePage()));
                     },
                     child: Column(children: [
                       Container(
@@ -179,8 +199,12 @@ class _HomePageState extends State<HomePage> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => Loan()));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Loan(
+                                    user: widget.user,
+                                  )));
                     },
                     child: Column(children: [
                       Container(
@@ -230,89 +254,99 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(
                 height: 40,
               ),
-              Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                            blurRadius: 5, color: Colors.grey.withOpacity(0.5))
-                      ],
-                      borderRadius: BorderRadius.circular(20),
-                      color: Colors.white),
-                  child: Column(children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
-                        Text(
-                          'Recent Transactions',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16),
+              FutureBuilder(
+                  future: retrieveRecentTransactions(),
+                  builder: (context, snapshot) => Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                          boxShadow: [
+                            BoxShadow(
+                                blurRadius: 5,
+                                color: Colors.grey.withOpacity(0.5))
+                          ],
+                          borderRadius: BorderRadius.circular(20),
+                          color: Colors.white),
+                      child: Column(children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: const [
+                            Text(
+                              'Recent Transactions',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16),
+                            ),
+                            Text(
+                              'View All',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            )
+                          ],
                         ),
-                        Text(
-                          'View All',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                        )
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 30,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Icon(
-                          Icons.outbond,
-                          size: 32,
+                        // const SizedBox(
+                        //   height: 30,
+                        // ),
+                        ListView.builder(
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: recentTransactions.length,
+                            itemBuilder: (context, index) => Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Icon(
+                                      Icons.outbond,
+                                      size: 32,
+                                    ),
+                                    Column(children: [
+                                      Text(
+                                        recentTransactions[index][1],
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16),
+                                      ),
+                                      const SizedBox(
+                                        height: 5,
+                                      ),
+                                      Text(
+                                          '${DateFormat.jm().format(DateTime.now())} ${DateFormat.yMMMd().format(DateTime.now())}')
+                                    ]),
+                                    Text(
+                                      '\$ ${recentTransactions[index][0]}',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 20),
+                                    )
+                                  ],
+                                )),
+                        const SizedBox(
+                          height: 20,
                         ),
-                        Column(children: [
-                          const Text(
-                            'Affan Ali',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16),
-                          ),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                          Text(
-                              '${DateFormat.jm().format(DateTime.now())} ${DateFormat.yMMMd().format(DateTime.now())}')
-                        ]),
-                        const Text(
-                          '\$5',
-                          style: TextStyle(
-                              fontWeight: FontWeight.w400, fontSize: 20),
-                        )
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Icon(
-                          Icons.outbond,
-                          size: 32,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Icon(
+                              Icons.outbond,
+                              size: 32,
+                            ),
+                            Column(children: [
+                              const Text(
+                                'Affan Ali',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 16),
+                              ),
+                              Text(
+                                  '${DateFormat.jm().format(DateTime.now())} ${DateFormat.yMMMd().format(DateTime.now())}')
+                            ]),
+                            const Text(
+                              '\$5',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w400, fontSize: 20),
+                            )
+                          ],
                         ),
-                        Column(children: [
-                          const Text(
-                            'Affan Ali',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16),
-                          ),
-                          Text(
-                              '${DateFormat.jm().format(DateTime.now())} ${DateFormat.yMMMd().format(DateTime.now())}')
-                        ]),
-                        const Text(
-                          '\$5',
-                          style: TextStyle(
-                              fontWeight: FontWeight.w400, fontSize: 20),
-                        )
-                      ],
-                    ),
-                  ]))
+                      ])))
             ],
           )),
     );
