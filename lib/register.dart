@@ -76,7 +76,6 @@ class _MyregisterState extends State<Myregister> {
                         yearly_income1 = double.parse(Yearly_income.text);
                       },
                       controller: Yearly_income,
-                      obscureText: true,
                       decoration: InputDecoration(
                           fillColor: Colors.grey.shade100,
                           filled: true,
@@ -230,12 +229,17 @@ class _MyregisterState extends State<Myregister> {
                               Future.delayed(Duration(seconds: 10), () {
                                 user_bank(cnic_number1);
                               });
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => firstPage()));
+                            } else {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) => const AlertDialog(
+                                        content: Text('Passwords must match'),
+                                      ));
                             }
-
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => firstPage()));
                           },
                           icon: Icon(Icons.arrow_forward),
                         ),

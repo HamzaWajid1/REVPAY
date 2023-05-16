@@ -24,8 +24,13 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<dynamic> retrieveRecentTransactions() async {
-    recentTransactions = await PostgreConnectionParameters.query(
-        'SELECT amount, user_name FROM deposit_or_withdrawl INNER JOIN users ON users.cnic_number = deposit_or_withdrawl.cnic_num WHERE cnic_num=${widget.user.cnicNumber}');
+    try {
+      recentTransactions = await PostgreConnectionParameters.query(
+          'SELECT acc_num_one, acc_num_two, amount, user_name, transfer_date FROM money_transfer INNER JOIN users ON acc_num_two = users.cnic_number WHERE acc_num_one=${widget.user.cnicNumber};');
+    } catch (err) {
+      print(err);
+    }
+    print(recentTransactions);
     return true;
   }
 
@@ -176,7 +181,9 @@ class _HomePageState extends State<HomePage> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const EditProfilePage()));
+                              builder: (context) => EditProfilePage(
+                                    user: widget.user,
+                                  )));
                     },
                     child: Column(children: [
                       Container(
@@ -278,7 +285,7 @@ class _HomePageState extends State<HomePage> {
                                   fontWeight: FontWeight.bold, fontSize: 16),
                             ),
                             Text(
-                              'View All',
+                              '',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
@@ -293,60 +300,40 @@ class _HomePageState extends State<HomePage> {
                             physics: const NeverScrollableScrollPhysics(),
                             shrinkWrap: true,
                             itemCount: recentTransactions.length,
-                            itemBuilder: (context, index) => Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    const Icon(
-                                      Icons.outbond,
-                                      size: 32,
-                                    ),
-                                    Column(children: [
+                            itemBuilder: (context, index) => Container(
+                                  margin: EdgeInsets.only(bottom: 10),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      const Icon(
+                                        Icons.outbond,
+                                        size: 32,
+                                      ),
+                                      Column(children: [
+                                        Text(
+                                          recentTransactions[index][3],
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16),
+                                        ),
+                                        const SizedBox(
+                                          height: 5,
+                                        ),
+                                        Text(
+                                            '${DateFormat.jm().format(recentTransactions[index][4])} ${DateFormat.yMMMd().format(recentTransactions[index][4])}')
+                                      ]),
                                       Text(
-                                        recentTransactions[index][1],
+                                        '\$ ${recentTransactions[index][2]}',
                                         style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16),
-                                      ),
-                                      const SizedBox(
-                                        height: 5,
-                                      ),
-                                      Text(
-                                          '${DateFormat.jm().format(DateTime.now())} ${DateFormat.yMMMd().format(DateTime.now())}')
-                                    ]),
-                                    Text(
-                                      '\$ ${recentTransactions[index][0]}',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w400,
-                                          fontSize: 20),
-                                    )
-                                  ],
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 20),
+                                      )
+                                    ],
+                                  ),
                                 )),
                         const SizedBox(
                           height: 20,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Icon(
-                              Icons.outbond,
-                              size: 32,
-                            ),
-                            Column(children: [
-                              const Text(
-                                'Affan Ali',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 16),
-                              ),
-                              Text(
-                                  '${DateFormat.jm().format(DateTime.now())} ${DateFormat.yMMMd().format(DateTime.now())}')
-                            ]),
-                            const Text(
-                              '\$5',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w400, fontSize: 20),
-                            )
-                          ],
                         ),
                       ])))
             ],

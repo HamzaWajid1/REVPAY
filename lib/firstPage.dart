@@ -91,6 +91,7 @@ class firstPageState extends State<firstPage> {
                       onChanged: (value) {
                         password_ = _password.text;
                       },
+                      obscureText: true,
                       textAlignVertical: TextAlignVertical.bottom,
                       //scrollPadding: EdgeInsets.fromLTRB(50, 0, 20, 0),
                       controller: _password,
@@ -111,7 +112,7 @@ class firstPageState extends State<firstPage> {
                     child: RichText(
                       textAlign: TextAlign.end,
                       text: TextSpan(
-                          text: 'Forgot Password? ',
+                          text: '',
                           recognizer: TapGestureRecognizer()
                             ..onTap = () {
                               debugPrint('The button is clicked!');
@@ -231,48 +232,60 @@ class firstPageState extends State<firstPage> {
 }
 
 void login(BuildContext context, int cnic, String password) async {
-  List<List<dynamic>> results = await PostgreConnectionParameters.query('''
+  List<List<dynamic>> results;
+  List<List<dynamic>> results1;
+  int checkcnic;
+  String checkpassword;
+  try {
+    results = await PostgreConnectionParameters.query('''
     SELECT cnic_num
     FROM _password
     WHERE cnic_num = '$cnic' and password_='$password';
   ''');
-  List<List<dynamic>> results1 = await PostgreConnectionParameters.query('''
+    results1 = await PostgreConnectionParameters.query('''
     SELECT password_
     FROM _password
     WHERE cnic_num = '$cnic' and password_='$password';
   ''');
+    checkcnic = results.first.first;
+    checkpassword = results1.first.first;
 
-  int checkcnic = results.first.first;
-  String checkpassword = results1.first.first;
+    if (checkcnic == cnic && checkpassword == password) {
+      List<List<dynamic>> userDetails = await PostgreConnectionParameters.query(
+          'SELECT user_name, yearly_income, marital_status, address, designation, date_of_birth, cnic_number FROM users WHERE cnic_number=$checkcnic');
 
-  if (checkcnic == cnic && checkpassword == password) {
-    List<List<dynamic>> userDetails = await PostgreConnectionParameters.query(
-        'SELECT user_name, yearly_income, marital_status, address, designation, date_of_birth, cnic_number FROM users WHERE cnic_number=$checkcnic');
+      List<List<dynamic>> accountNumber =
+          await PostgreConnectionParameters.query(
+              'SELECT acc_num FROM user_bank WHERE cnic_num=$checkcnic');
 
-    List<List<dynamic>> accountNumber = await PostgreConnectionParameters.query(
-        'SELECT acc_num FROM user_bank WHERE cnic_num=$checkcnic');
+      List<List<dynamic>> balance = await PostgreConnectionParameters.query(
+          'SELECT amount_present FROM bank_account WHERE acc_num=${accountNumber.first.first}');
 
-    List<List<dynamic>> balance = await PostgreConnectionParameters.query(
-        'SELECT amount_present FROM bank_account WHERE acc_num=${accountNumber.first.first}');
-
-    print(userDetails);
-    print(accountNumber);
-    print(balance);
-    User user = User(
-        userName: userDetails.first[0],
-        mobileNumber: '',
-        yearlyIncome: userDetails.first[1],
-        maritalStatus: userDetails.first[2],
-        address: userDetails.first[3],
-        designation: userDetails.first[4],
-        dateOfBirth: userDetails.first[5],
-        cnicNumber: userDetails.first[6],
-        balance: balance.first.first);
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => HomePage(
-                  user: user,
-                )));
+      print(userDetails);
+      print(accountNumber);
+      print(balance);
+      User user = User(
+          userName: userDetails.first[0],
+          mobileNumber: '',
+          yearlyIncome: userDetails.first[1],
+          maritalStatus: userDetails.first[2],
+          address: userDetails.first[3],
+          designation: userDetails.first[4],
+          dateOfBirth: userDetails.first[5],
+          cnicNumber: userDetails.first[6],
+          balance: balance.first.first);
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => HomePage(
+                    user: user,
+                  )));
+    }
+  } catch (err) {
+    showDialog(
+        context: context,
+        builder: (context) => const AlertDialog(
+              content: Text('Invalid Credentials'),
+            ));
   }
 }

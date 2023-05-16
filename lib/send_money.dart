@@ -4,12 +4,14 @@ import 'package:revpay/model/loan.dart';
 import 'package:postgres/postgres.dart';
 import 'package:revpay/widgets/textfield_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
 
+import 'model/User.dart';
 import 'model/postgre_connection_parameters.dart';
 
 class SendMoney extends StatefulWidget {
   const SendMoney({super.key, required this.user});
-  final user;
+  final User user;
 
   @override
   State<SendMoney> createState() => _SendMoneyState();
@@ -92,18 +94,6 @@ class _SendMoneyState extends State<SendMoney> {
                 padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
                 physics: const BouncingScrollPhysics(),
                 children: [
-                  TextFieldWidget(
-                    onChanged: (value) {
-                      debugPrint(_accountnum.text);
-                      send_account = int.parse(_accountnum.text);
-                      debugPrint("hamza is a $send_account");
-                    },
-                    errorMessage: nameError,
-                    textInputType: TextInputType.number,
-                    controller1: _accountnum,
-                    label: 'Sender Account Number',
-                    text: _accountnum.text,
-                  ),
                   const SizedBox(height: 40),
                   TextFieldWidget(
                     errorMessage: nameError,
@@ -155,9 +145,9 @@ class _SendMoneyState extends State<SendMoney> {
                           child: const Text("Send Amount",
                               style: TextStyle(fontSize: 22)),
                           onPressed: () {
-                            debugPrint('$amount');
-                            debugPrint('$rec_account');
-                            Send(amount, send_account, rec_account, purpose);
+                            widget.user.balance = widget.user.balance - amount;
+                            Send(amount, widget.user.cnicNumber, rec_account,
+                                purpose);
                             if (_accountnum.text.isEmpty) {
                               nameError = 'This field is empty';
                             }
@@ -209,10 +199,10 @@ WHERE acc_num=${send_account};
    
 
 ''');
-  await PostgreConnectionParameters.query('''
-  insert into money_transfer(acc_num_one,acc_num_two,amount)
-	 values($send_account,$rec_account,$amount);
-   
-
-''');
+  print('sender $send_account');
+  print('reciever $rec_account');
+  print('amount $amount');
+  print('amount ${DateTime.now()}');
+  await PostgreConnectionParameters.query(
+      'insert into money_transfer(acc_num_one,acc_num_two,amount, transfer_date)values($send_account,$rec_account,$amount,CURRENT_DATE);');
 }

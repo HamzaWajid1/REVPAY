@@ -1,11 +1,11 @@
 import 'package:postgres/postgres.dart';
 
 class PostgreConnectionParameters {
-  static const String ip = '192.168.0.104';
+  static const String ip = '192.168.1.107';
   static const int port = 5432;
-  static const String databaseName = 'RevPay';
+  static const String databaseName = 'postgres';
   static const String username = 'postgres';
-  static const String password = 'Hamza.paracha1';
+  static const String password = 'pgadmin';
   static late PostgreSQLConnection connection;
 
   static Future<PostgreSQLResult> query(String queryString) async {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:revpay/Home_Page.dart';
+import 'package:revpay/model/User.dart';
 import 'package:revpay/model/loan.dart';
 import 'package:postgres/postgres.dart';
 import 'package:revpay/model/postgre_connection_parameters.dart';
@@ -7,7 +8,8 @@ import 'package:revpay/widgets/textfield_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class EditProfilePage extends StatefulWidget {
-  const EditProfilePage({super.key});
+  const EditProfilePage({super.key, required this.user});
+  final User user;
 
   @override
   Editprofilepagestate createState() => Editprofilepagestate();
@@ -90,15 +92,6 @@ class Editprofilepagestate extends State<EditProfilePage> {
                 padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
                 physics: const BouncingScrollPhysics(),
                 children: [
-                  TextFieldWidget(
-                      errorMessage: nameError,
-                      textInputType: TextInputType.number,
-                      controller1: cnic,
-                      label: 'CNIC',
-                      text: cnic.text,
-                      onChanged: (value) {
-                        cnic2 = int.parse(cnic.text);
-                      }),
                   const SizedBox(height: 40),
                   TextFieldWidget(
                       errorMessage: nameError,
@@ -147,11 +140,13 @@ class Editprofilepagestate extends State<EditProfilePage> {
                           child: const Text("Add Loan",
                               style: TextStyle(fontSize: 22)),
                           onPressed: () {
+                            widget.user.balance = widget.user.balance + pw;
                             debugPrint('$cnic2');
                             debugPrint('$pw');
                             debugPrint('$p');
                             debugPrint('${loan.assetName}');
-                            adding_loan(cnic2, loan.assetName, pw, p);
+                            adding_loan(
+                                widget.user.cnicNumber, loan.assetName, pw, p);
 
                             if (_name.text.isEmpty) {
                               nameError = 'This field is empty';
@@ -167,7 +162,11 @@ class Editprofilepagestate extends State<EditProfilePage> {
                             storeData();
                             initialGetSavedData();
 
-                            Navigator.pop(context);
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        HomePage(user: widget.user)));
                           })),
                 ]),
           ),
